@@ -6,6 +6,7 @@ public class SellOutClass {
 	}
 	
 	public void sell(int price){
+		
 		class Apple{
 			int innerPrice = 0;
 			

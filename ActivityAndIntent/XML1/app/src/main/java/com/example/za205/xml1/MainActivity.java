@@ -1,6 +1,7 @@
 package com.example.za205.xml1;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -46,12 +47,29 @@ public class MainActivity extends AppCompatActivity {
 
         class button1 implements OnClickListener{
             public void onClick(View v){
-                if(currentRadioButton.getText().equals("in")){
-                    setTitle("你选择的答案是：是正确的！");
+                String ans = "";
+                if(r1.isChecked()){
+                    ans = "on";
                 }
-                else{
-                    setTitle("你选择的答案是：是错误的！");
+                else if(r2.isChecked()){
+                    ans = "at";
                 }
+                else if(r3.isChecked()){
+                    ans = "of";
+                }
+                else if(r4.isChecked()){
+                    ans = "in";
+                }
+
+                Intent intent = new Intent();
+                intent.setClass(MainActivity.this, OtherActivity.class);
+
+                Bundle bundle = new Bundle();
+                bundle.putString("ans", ans);
+
+                intent.putExtras(bundle);
+
+                startActivityForResult(intent, 0);
             }
         }
 
@@ -61,6 +79,15 @@ public class MainActivity extends AppCompatActivity {
                 setTitle("");
             }
         }
+
+        protected void onActivityResult(int requestCode, int resultCode, Intent data){
+            super.onActivityResult(requestCode, resultCode, data);
+            if (requestCode == 0 && resultCode == 0){
+                Bundle bundle = data.getExtras();
+                String ans = bundle.getString("ans");
+            }
+        }
+
 
         private RadioGroup.OnCheckedChangeListener mchangeRadio = new RadioGroup.OnCheckedChangeListener(){
             public void onCheckedChanged(RadioGroup group, int checkedId){

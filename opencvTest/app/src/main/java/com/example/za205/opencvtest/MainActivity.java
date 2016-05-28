@@ -14,15 +14,22 @@ import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.Utils;
 import org.opencv.core.Mat;
 import org.opencv.android.OpenCVLoader;
+import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
 public class MainActivity extends AppCompatActivity {
-    Button btnProcess;
+    Button btnOriProcess;
+    Button btnGrayProcess;
+    Button btnBlurProcess;
+    Button btnCannyProcess;
+    Button btnLaplacianProcess;
     Bitmap srcBitmap;
     Bitmap grayBitmap;
-    ImageView imgHuaishi;
-    private static boolean flag = true;
-    private static boolean isFirst = true;
+    Bitmap blurBitmap;
+    Bitmap cannyBitmap;
+    Bitmap laplacianBitmap;
+    ImageView imgView;
+
     private static final String TAG = "MainActivity";
 
     //OpenCV库加载并初始化成功后的回调函数
@@ -40,7 +47,6 @@ public class MainActivity extends AppCompatActivity {
                     Log.i(TAG, "加载失败");
                     break;
             }
-
         }
     };
 
@@ -51,7 +57,11 @@ public class MainActivity extends AppCompatActivity {
 
         initUI();
 
-        btnProcess.setOnClickListener(new ProcessClickListener());
+        btnOriProcess.setOnClickListener(new oriProcessClickListener());
+        btnGrayProcess.setOnClickListener(new grayProcessClickListener());
+        btnBlurProcess.setOnClickListener(new blurProcessClickListener());
+        btnCannyProcess.setOnClickListener(new cannyProcessClickListener());
+        btnLaplacianProcess.setOnClickListener(new laplacianProcessClickListener());
     }
 
     @Override
@@ -62,10 +72,20 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void initUI(){
-        btnProcess = (Button)findViewById(R.id.btn_gray_process);
-        imgHuaishi = (ImageView)findViewById(R.id.img_huaishi);
+        btnOriProcess = (Button)findViewById(R.id.btn_ori_process);
+        btnGrayProcess = (Button)findViewById(R.id.btn_gray_process);
+        btnBlurProcess = (Button)findViewById(R.id.btn_blur_process);
+        btnCannyProcess = (Button)findViewById(R.id.btn_canny_process);
+        btnLaplacianProcess = (Button)findViewById(R.id.btn_laplacian_process);
+
+        imgView = (ImageView)findViewById(R.id.img_huaishi);
         Log.i(TAG, "initUI sucess...");
 
+    }
+
+    public void procOri(){
+        srcBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.test);
+        Log.i(TAG, "procOri sucess...");
     }
 
     public void procSrc2Gray(){
@@ -79,31 +99,75 @@ public class MainActivity extends AppCompatActivity {
         Log.i(TAG, "procSrc2Gray sucess...");
     }
 
-    private class ProcessClickListener implements View.OnClickListener {
+    public void procBlur(){
+        Mat rgbMat = new Mat();
+        Mat blurMat = new Mat();
+        srcBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.test);
+        blurBitmap = Bitmap.createBitmap(srcBitmap.getWidth(), srcBitmap.getHeight(), Bitmap.Config.RGB_565);
+        Utils.bitmapToMat(srcBitmap, rgbMat);
+        Imgproc.GaussianBlur(rgbMat, blurMat, new Size(3, 3), 10);
+        Utils.matToBitmap(blurMat, blurBitmap);
+        Log.i(TAG, "procBlur sucess...");
+    }
+
+    public  void procCanny(){
+        Mat rgbMat = new Mat();
+        Mat cannyMat = new Mat();
+        srcBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.test);
+        cannyBitmap = Bitmap.createBitmap(srcBitmap.getWidth(), srcBitmap.getHeight(), Bitmap.Config.RGB_565);
+        Utils.bitmapToMat(srcBitmap, rgbMat);
+        Imgproc.Canny(rgbMat, cannyMat, 1, 3);
+        Utils.matToBitmap(cannyMat, cannyBitmap);
+        Log.i(TAG, "procCanny sucess...");
+    }
+
+    public void procLaplacian(){
+        Mat rgbMat = new Mat();
+        Mat laplacianMat = new Mat();
+        srcBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.test);
+        laplacianBitmap = Bitmap.createBitmap(srcBitmap.getWidth(), srcBitmap.getHeight(), Bitmap.Config.RGB_565);
+        Utils.bitmapToMat(srcBitmap, rgbMat);
+        Imgproc.Laplacian(rgbMat, laplacianMat, laplacianMat.depth());
+        Utils.matToBitmap(laplacianMat, laplacianBitmap);
+        Log.i(TAG, "procLaplacian sucess...");
+    }
+
+    private class oriProcessClickListener implements View.OnClickListener{
+        public void onClick(View v){
+            procOri();
+            imgView.setImageBitmap(srcBitmap);
+        }
+    }
+
+    private class grayProcessClickListener implements View.OnClickListener {
 
         @Override
         public void onClick(View v) {
-            // TODO Auto-generated method stub
-            if(isFirst)
-            {
-                procSrc2Gray();
-                isFirst = false;
-            }
-            if(flag){
-                imgHuaishi.setImageBitmap(grayBitmap);
-                btnProcess.setText("查看原图");
-                flag = false;
-            }
-            else{
-                imgHuaishi.setImageBitmap(srcBitmap);
-                btnProcess.setText("灰度化");
-                flag = true;
-            }
+            procSrc2Gray();
+            imgView.setImageBitmap(grayBitmap);
         }
-
     }
 
-    @Override
+    private class blurProcessClickListener implements View.OnClickListener{
+        public void onClick(View v){
+            procBlur();
+            imgView.setImageBitmap(blurBitmap);
+        }
+    }
+
+    private class cannyProcessClickListener implements View.OnClickListener{
+        public void onClick(View v){
+            procCanny();
+            imgView.setImageBitmap(cannyBitmap);
+        }
+    }
+
+    private class laplacianProcessClickListener implements View.OnClickListener{
+        public void onClick(View v){
+            procLaplacian();
+            imgView.setImageBitmap(laplacianBitmap);
+        }
+    }
     protected void onResume() {
         // TODO Auto-generated method stub
         super.onResume();

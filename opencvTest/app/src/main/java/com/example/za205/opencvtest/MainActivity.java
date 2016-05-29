@@ -2,6 +2,7 @@ package com.example.za205.opencvtest;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -16,6 +17,9 @@ import org.opencv.core.Mat;
 import org.opencv.android.OpenCVLoader;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
+
+import java.io.File;
+import java.io.FileOutputStream;
 
 public class MainActivity extends AppCompatActivity {
     Button btnOriProcess;
@@ -49,6 +53,12 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     };
+    //防止出现Native method not found org.opencv.core.mat.n_mat-Android的错误
+    static {
+        if (!OpenCVLoader.initDebug()) {
+            // Handle initialization error
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +72,7 @@ public class MainActivity extends AppCompatActivity {
         btnBlurProcess.setOnClickListener(new blurProcessClickListener());
         btnCannyProcess.setOnClickListener(new cannyProcessClickListener());
         btnLaplacianProcess.setOnClickListener(new laplacianProcessClickListener());
+        saveAllBitmap();
     }
 
     @Override
@@ -105,7 +116,7 @@ public class MainActivity extends AppCompatActivity {
         srcBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.test);
         blurBitmap = Bitmap.createBitmap(srcBitmap.getWidth(), srcBitmap.getHeight(), Bitmap.Config.RGB_565);
         Utils.bitmapToMat(srcBitmap, rgbMat);
-        Imgproc.GaussianBlur(rgbMat, blurMat, new Size(5, 5), 10);
+        Imgproc.GaussianBlur(rgbMat, blurMat, new Size(7, 7), 6);
         Utils.matToBitmap(blurMat, blurBitmap);
         Log.i(TAG, "procBlur sucess...");
     }
@@ -116,7 +127,7 @@ public class MainActivity extends AppCompatActivity {
         srcBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.test);
         cannyBitmap = Bitmap.createBitmap(srcBitmap.getWidth(), srcBitmap.getHeight(), Bitmap.Config.RGB_565);
         Utils.bitmapToMat(srcBitmap, rgbMat);
-        Imgproc.Canny(rgbMat, cannyMat, 1, 3);
+        Imgproc.Canny(rgbMat, cannyMat,1, 1);
         Utils.matToBitmap(cannyMat, cannyBitmap);
         Log.i(TAG, "procCanny sucess...");
     }
@@ -127,9 +138,34 @@ public class MainActivity extends AppCompatActivity {
         srcBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.test);
         laplacianBitmap = Bitmap.createBitmap(srcBitmap.getWidth(), srcBitmap.getHeight(), Bitmap.Config.RGB_565);
         Utils.bitmapToMat(srcBitmap, rgbMat);
-        Imgproc.Laplacian(rgbMat, laplacianMat, laplacianMat.depth());
+        Imgproc.Laplacian(rgbMat, laplacianMat, laplacianMat.depth(), 3, 1, 1);
         Utils.matToBitmap(laplacianMat, laplacianBitmap);
         Log.i(TAG, "procLaplacian sucess...");
+    }
+
+    public void saveAllBitmap()
+    {
+        procOri();
+        procSrc2Gray();
+        procBlur();
+        procLaplacian();
+        procCanny();
+        //加载背景图片
+        //Bitmap bmps = BitmapFactory.decodeResource(getResources(), R.drawable.playerbackground);
+
+        File file = new File("@drawable");
+        if(!file.exists())
+            file.mkdirs();
+        try {
+            FileOutputStream oriFileOutputStream = new FileOutputStream(file.getPath() + "/original.jpg");
+            srcBitmap.compress(Bitmap.CompressFormat.JPEG, 100, oriFileOutputStream);
+            oriFileOutputStream.close();
+
+            System.out.println("saveBmp is here");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
     private class oriProcessClickListener implements View.OnClickListener{

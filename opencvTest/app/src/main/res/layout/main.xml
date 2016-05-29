@@ -17,9 +17,11 @@
         android:textStyle="bold"
         android:id="@+id/textView" />
     <Button
-        android:layout_width="20dp"
-        android:layout_height="20dp"
-        android:id="@+id/save"/>
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:id="@+id/save"
+        android:background="@drawable/save"/>
+
     <ImageView
         android:id="@+id/img_huaishi"
         android:layout_width="220dp"

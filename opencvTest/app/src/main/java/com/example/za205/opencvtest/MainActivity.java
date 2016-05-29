@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
+import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -23,9 +24,12 @@ import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 
 public class MainActivity extends AppCompatActivity {
+    Button btnSave;
     Button btnOriProcess;
     Button btnGrayProcess;
     Button btnBlurProcess;
@@ -37,6 +41,8 @@ public class MainActivity extends AppCompatActivity {
     Bitmap cannyBitmap;
     Bitmap laplacianBitmap;
     ImageView imgView;
+
+    int flag;
 
     private static final String TAG = "MainActivity";
 
@@ -72,6 +78,7 @@ public class MainActivity extends AppCompatActivity {
         initUI();
 
         loadPicture();
+        btnSave.setOnClickListener(new saveClickListener());
         btnOriProcess.setOnClickListener(new oriProcessClickListener());
         btnGrayProcess.setOnClickListener(new grayProcessClickListener());
         btnBlurProcess.setOnClickListener(new blurProcessClickListener());
@@ -99,6 +106,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void initUI(){
+        btnSave = (Button)findViewById(R.id.save);
         btnOriProcess = (Button)findViewById(R.id.btn_ori_process);
         btnGrayProcess = (Button)findViewById(R.id.btn_gray_process);
         btnBlurProcess = (Button)findViewById(R.id.btn_blur_process);
@@ -201,9 +209,39 @@ public class MainActivity extends AppCompatActivity {
         return super.onKeyDown(keyCode, event);
     }
 
+    private class saveClickListener implements View.OnClickListener{
+        public void onClick(View v){
+            File appDir = new File(Environment.getExternalStorageDirectory(), "Download");
+            if (!appDir.exists()) {
+                appDir.mkdir();
+            }
+            String fileName = System.currentTimeMillis() + ".jpg";
+            File file = new File(appDir, fileName);
+            try {
+                FileOutputStream fos = new FileOutputStream(file);
+                switch(flag){
+                    case 0:srcBitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);break;
+                    case 1:grayBitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);break;
+                    case 2:blurBitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);break;
+                    case 3:laplacianBitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);break;
+                    case 4:cannyBitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);break;
+                }
+
+                fos.flush();
+                fos.close();
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            Log.i(TAG, "save sucess...");
+        }
+    }
+
     private class oriProcessClickListener implements View.OnClickListener{
         public void onClick(View v){
             procOri();
+            flag = 0;
             imgView.setImageBitmap(srcBitmap);
         }
     }
@@ -213,6 +251,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onClick(View v) {
             procSrc2Gray();
+            flag = 1;
             imgView.setImageBitmap(grayBitmap);
         }
     }
@@ -220,6 +259,7 @@ public class MainActivity extends AppCompatActivity {
     private class blurProcessClickListener implements View.OnClickListener{
         public void onClick(View v){
             procBlur();
+            flag = 2;
             imgView.setImageBitmap(blurBitmap);
         }
     }
@@ -227,6 +267,7 @@ public class MainActivity extends AppCompatActivity {
     private class cannyProcessClickListener implements View.OnClickListener{
         public void onClick(View v){
             procCanny();
+            flag = 3;
             imgView.setImageBitmap(cannyBitmap);
         }
     }
@@ -234,6 +275,7 @@ public class MainActivity extends AppCompatActivity {
     private class laplacianProcessClickListener implements View.OnClickListener{
         public void onClick(View v){
             procLaplacian();
+            flag = 4;
             imgView.setImageBitmap(laplacianBitmap);
         }
     }

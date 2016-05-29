@@ -105,7 +105,7 @@ public class MainActivity extends AppCompatActivity {
         srcBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.test);
         blurBitmap = Bitmap.createBitmap(srcBitmap.getWidth(), srcBitmap.getHeight(), Bitmap.Config.RGB_565);
         Utils.bitmapToMat(srcBitmap, rgbMat);
-        Imgproc.GaussianBlur(rgbMat, blurMat, new Size(3, 3), 10);
+        Imgproc.GaussianBlur(rgbMat, blurMat, new Size(5, 5), 10);
         Utils.matToBitmap(blurMat, blurBitmap);
         Log.i(TAG, "procBlur sucess...");
     }

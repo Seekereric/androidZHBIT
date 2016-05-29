@@ -5,7 +5,9 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
 import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -211,7 +213,7 @@ public class MainActivity extends AppCompatActivity {
 
     private class saveClickListener implements View.OnClickListener{
         public void onClick(View v){
-            File appDir = new File(Environment.getExternalStorageDirectory(), "Download");
+            File appDir = new File(Environment.getExternalStorageDirectory(), "Boohee");
             if (!appDir.exists()) {
                 appDir.mkdir();
             }
@@ -223,17 +225,19 @@ public class MainActivity extends AppCompatActivity {
                     case 0:srcBitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);break;
                     case 1:grayBitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);break;
                     case 2:blurBitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);break;
-                    case 3:laplacianBitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);break;
-                    case 4:cannyBitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);break;
+                    case 4:laplacianBitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);break;
+                    case 3:cannyBitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);break;
                 }
-
+                Toast.makeText(getApplicationContext(), "OK!",Toast.LENGTH_SHORT).show();
                 fos.flush();
                 fos.close();
+
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             } catch (IOException e) {
                 e.printStackTrace();
             }
+            sendBroadcast(new Intent(Intent.ACTION_MEDIA_MOUNTED, Uri.parse("file://"+ Environment.getExternalStorageDirectory())));
             Log.i(TAG, "save sucess...");
         }
     }

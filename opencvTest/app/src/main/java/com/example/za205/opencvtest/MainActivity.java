@@ -1,15 +1,19 @@
 package com.example.za205.opencvtest;
 
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.Utils;
@@ -67,12 +71,24 @@ public class MainActivity extends AppCompatActivity {
 
         initUI();
 
+        loadPicture();
         btnOriProcess.setOnClickListener(new oriProcessClickListener());
         btnGrayProcess.setOnClickListener(new grayProcessClickListener());
         btnBlurProcess.setOnClickListener(new blurProcessClickListener());
         btnCannyProcess.setOnClickListener(new cannyProcessClickListener());
         btnLaplacianProcess.setOnClickListener(new laplacianProcessClickListener());
-        saveAllBitmap();
+        //saveAllBitmap();
+    }
+
+    public void loadPicture() {
+
+        Bundle extras = getIntent().getExtras();
+
+        String srcImg = extras.getString("srcImage");
+        srcBitmap = BitmapFactory.decodeFile(srcImg);
+        imgView.setImageBitmap(srcBitmap);
+        //imgView.getLocationOnScreen(viewCoords);
+        //Log.i(TAG, viewCoords[0] + "," + viewCoords[1]);
     }
 
     @Override
@@ -95,14 +111,19 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void procOri(){
-        srcBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.test);
+        //srcBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.test);
+        Bundle extras = getIntent().getExtras();
+
+        String srcImg = extras.getString("srcImage");
+        srcBitmap = BitmapFactory.decodeFile(srcImg);
+        imgView.setImageBitmap(srcBitmap);
         Log.i(TAG, "procOri sucess...");
     }
 
     public void procSrc2Gray(){
         Mat rgbMat = new Mat();
         Mat grayMat = new Mat();
-        srcBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.test);
+        //srcBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.test);
         grayBitmap = Bitmap.createBitmap(srcBitmap.getWidth(), srcBitmap.getHeight(), Bitmap.Config.RGB_565);
         Utils.bitmapToMat(srcBitmap, rgbMat);//convert original bitmap to Mat, R G B.
         Imgproc.cvtColor(rgbMat, grayMat, Imgproc.COLOR_RGB2GRAY);//rgbMat to gray grayMat
@@ -113,7 +134,7 @@ public class MainActivity extends AppCompatActivity {
     public void procBlur(){
         Mat rgbMat = new Mat();
         Mat blurMat = new Mat();
-        srcBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.test);
+        //srcBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.test);
         blurBitmap = Bitmap.createBitmap(srcBitmap.getWidth(), srcBitmap.getHeight(), Bitmap.Config.RGB_565);
         Utils.bitmapToMat(srcBitmap, rgbMat);
         Imgproc.GaussianBlur(rgbMat, blurMat, new Size(7, 7), 6);
@@ -124,10 +145,10 @@ public class MainActivity extends AppCompatActivity {
     public  void procCanny(){
         Mat rgbMat = new Mat();
         Mat cannyMat = new Mat();
-        srcBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.test);
+        //srcBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.test);
         cannyBitmap = Bitmap.createBitmap(srcBitmap.getWidth(), srcBitmap.getHeight(), Bitmap.Config.RGB_565);
         Utils.bitmapToMat(srcBitmap, rgbMat);
-        Imgproc.Canny(rgbMat, cannyMat,1, 1);
+        Imgproc.Canny(rgbMat, cannyMat, 1, 1);
         Utils.matToBitmap(cannyMat, cannyBitmap);
         Log.i(TAG, "procCanny sucess...");
     }
@@ -135,7 +156,7 @@ public class MainActivity extends AppCompatActivity {
     public void procLaplacian(){
         Mat rgbMat = new Mat();
         Mat laplacianMat = new Mat();
-        srcBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.test);
+        //srcBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.test);
         laplacianBitmap = Bitmap.createBitmap(srcBitmap.getWidth(), srcBitmap.getHeight(), Bitmap.Config.RGB_565);
         Utils.bitmapToMat(srcBitmap, rgbMat);
         Imgproc.Laplacian(rgbMat, laplacianMat, laplacianMat.depth(), 3, 1, 1);
@@ -166,6 +187,18 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event)
+    {
+        if(keyCode == KeyEvent.KEYCODE_BACK){
+            Intent myIntent = new Intent();
+            myIntent = new Intent(MainActivity.this, OpenImage.class);
+            startActivity(myIntent);
+            this.finish();
+        }
+        return super.onKeyDown(keyCode, event);
     }
 
     private class oriProcessClickListener implements View.OnClickListener{

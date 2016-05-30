@@ -50,7 +50,6 @@ public class MainActivity extends AppCompatActivity {
 
     //OpenCV库加载并初始化成功后的回调函数
     private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
-
         @Override
         public void onManagerConnected(int status) {
             // TODO Auto-generated method stub
@@ -78,7 +77,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.main);
 
         initUI();
-
         loadPicture();
         btnSave.setOnClickListener(new saveClickListener());
         btnOriProcess.setOnClickListener(new oriProcessClickListener());
@@ -86,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
         btnBlurProcess.setOnClickListener(new blurProcessClickListener());
         btnCannyProcess.setOnClickListener(new cannyProcessClickListener());
         btnLaplacianProcess.setOnClickListener(new laplacianProcessClickListener());
-        //saveAllBitmap();
+
     }
 
     public void loadPicture() {
@@ -96,8 +94,6 @@ public class MainActivity extends AppCompatActivity {
         String srcImg = extras.getString("srcImage");
         srcBitmap = BitmapFactory.decodeFile(srcImg);
         imgView.setImageBitmap(srcBitmap);
-        //imgView.getLocationOnScreen(viewCoords);
-        //Log.i(TAG, viewCoords[0] + "," + viewCoords[1]);
     }
 
     @Override
@@ -174,31 +170,6 @@ public class MainActivity extends AppCompatActivity {
         Log.i(TAG, "procLaplacian sucess...");
     }
 
-    public void saveAllBitmap()
-    {
-        procOri();
-        procSrc2Gray();
-        procBlur();
-        procLaplacian();
-        procCanny();
-        //加载背景图片
-        //Bitmap bmps = BitmapFactory.decodeResource(getResources(), R.drawable.playerbackground);
-
-        File file = new File("@drawable");
-        if(!file.exists())
-            file.mkdirs();
-        try {
-            FileOutputStream oriFileOutputStream = new FileOutputStream(file.getPath() + "/original.jpg");
-            srcBitmap.compress(Bitmap.CompressFormat.JPEG, 100, oriFileOutputStream);
-            oriFileOutputStream.close();
-
-            System.out.println("saveBmp is here");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-    }
-
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event)
     {
@@ -228,10 +199,9 @@ public class MainActivity extends AppCompatActivity {
                     case 4:laplacianBitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);break;
                     case 3:cannyBitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);break;
                 }
-                Toast.makeText(getApplicationContext(), "OK!",Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "OK", Toast.LENGTH_SHORT).show();
                 fos.flush();
                 fos.close();
-
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             } catch (IOException e) {
@@ -289,15 +259,5 @@ public class MainActivity extends AppCompatActivity {
         //load OpenCV engine and init OpenCV library
         OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_2_4_4, getApplicationContext(), mLoaderCallback);
         Log.i(TAG, "onResume sucess load OpenCV...");
-//      new Handler().postDelayed(new Runnable(){
-//
-//          @Override
-//          public void run() {
-//              // TODO Auto-generated method stub
-//              procSrc2Gray();
-//          }
-//
-//      }, 1000);
-
     }
 }

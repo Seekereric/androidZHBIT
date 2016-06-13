@@ -144,7 +144,6 @@ public class LifeDiaryContentProvider extends ContentProvider {
         }
 
         SQLiteDatabase db = mOpenHelper.getWritableDatabase();
-
         long rowId = db.insert(DIARY_TABLE_NAME, DiaryColumns.BODY, values);
         if(rowId > 0){
             Uri diaryUri = ContentUris.withAppendedId(DiaryColumns.CONTENT_URI, rowId);

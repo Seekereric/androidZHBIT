@@ -1,5 +1,6 @@
 package com.example.za205.dairy1;
 
+import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
@@ -15,7 +16,7 @@ import com.example.za205.dairy1.Fields.DiaryColumns;
 /**
  * Created by za205 on 6/13/2016.
  */
-public class DiaryEditor extends AppCompatActivity {
+public class DiaryEditor extends Activity {
 
     private static final String TAG = "Diary";
     public static final String EDI_DIARY_ACTION = "com.example.za205.dairy1.DiaryEditor.EDIT_DIARY";
@@ -95,7 +96,7 @@ public class DiaryEditor extends AppCompatActivity {
         values.put(Fields.DiaryColumns.CREATED, LifeDiaryContentProvider.getFormateCreatedDate());
         values.put(Fields.DiaryColumns.TITLE, title);
         values.put(Fields.DiaryColumns.BODY, body);
-        getContentResolver().update(mUri, values,null, null);
+        getContentResolver().update(mUri, values, null, null);
     }
 }
 

@@ -20,6 +20,22 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name=".DiaryEditor"
+            android:theme="@android:style/Theme.Light"
+            android:label="@string/title_diary">
+            <intent-filter>
+                <action android:name = "com.example.za205.dairy1.DiaryEditor.EDIT_DIARY" />
+                <category android:name = "android.intent.category.DEFAULT"/>
+                <data android:mimeType = "vnd.android.cursor.item/vnd.google.diary" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name = "com.example.za205.dairy1.DiaryEditor.INSERT_DIARY" />
+                <category android:name = "android.intent.category.DEFAULT"/>
+                <data android:mimeType = "vnd.android.cursor.item/vnd.google.diary" />
+            </intent-filter>
+        </activity>
+
     </application>
 
 </manifest>

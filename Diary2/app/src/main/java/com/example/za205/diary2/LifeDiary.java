@@ -60,7 +60,7 @@ public class LifeDiary extends ListActivity {
     private void InitList() {
         String textColumn = NoteDao.Properties.Title.columnName;
         String dateColumn = NoteDao.Properties.Date.columnName;
-        String orderBy = dateColumn + "COLLATE LOCALIZED DESC";
+        String orderBy = dateColumn + " COLLATE LOCALIZED DESC";
         cursor = db.query(noteDao.getTablename(), noteDao.getAllColumns(), null, null, null, null, orderBy);
 
         String[] from = {textColumn, dateColumn};
@@ -76,12 +76,13 @@ public class LifeDiary extends ListActivity {
         return true;
     }
 
-    public boolean onOptionItemSelected(MenuItem item){
+    public boolean onOptionsItemSelected(MenuItem item){
         switch(item.getItemId()){
             case MENU_ITEM_INSERT:
                 Intent intent0 = new Intent(this, DiaryEditor.class);
                 intent0.setAction(DiaryEditor.INSERT_DIARY_ACTION);
                 intent0.setData(getIntent().getData());
+
                 startActivity(intent0);
                 finish();
                 cursor.requery();
@@ -96,10 +97,8 @@ public class LifeDiary extends ListActivity {
 
         Intent intent = new Intent(this, DiaryEditor.class);
         intent.setAction(DiaryEditor.EDI_DIARY_ACTION);
-
         Bundle bundle = new Bundle();
         bundle.putLong("id", id);
-
         intent.putExtras(bundle);
         Log.d("id", mid);
 
